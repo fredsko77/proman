@@ -22,6 +22,12 @@ class ProjectFlow
     #[ORM\ManyToOne(inversedBy: 'projectFlow')]
     private ?ProjectMember $member = null;
 
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $type = null;
+
+    #[ORM\Column]
+    private ?bool $isRecurrent = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +65,30 @@ class ProjectFlow
     public function setMember(?ProjectMember $member): self
     {
         $this->member = $member;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function isIsRecurrent(): ?bool
+    {
+        return $this->isRecurrent;
+    }
+
+    public function setIsRecurrent(bool $isRecurrent): self
+    {
+        $this->isRecurrent = $isRecurrent;
 
         return $this;
     }

@@ -49,9 +49,13 @@ class Project
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: ProjectFlow::class)]
     private Collection $projectFlow;
 
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Document::class)]
+    private Collection $documents;
+
     public function __construct()
     {
         $this->projectFlow = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,6 +207,36 @@ class Project
             // set the owning side to null (unless already changed)
             if ($projectFlow->getProject() === $this) {
                 $projectFlow->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Document>
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents->add($document);
+            $document->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(Document $document): self
+    {
+        if ($this->documents->removeElement($document)) {
+            // set the owning side to null (unless already changed)
+            if ($document->getProject() === $this) {
+                $document->setProject(null);
             }
         }
 
