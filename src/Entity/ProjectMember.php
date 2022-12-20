@@ -27,12 +27,16 @@ class ProjectMember
     #[ORM\ManyToOne(inversedBy: 'projectMembers')]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'member', targetEntity: ProjectFlow::class)]
+    #[ORM\OneToMany(mappedBy: 'member', targetEntity: ProjectFlow::class, cascade: ['persist', 'remove'])]
     private Collection $projectFlow;
+
+    #[ORM\OneToMany(mappedBy: 'member', targetEntity: Document::class, cascade: ['persist', 'remove'])]
+    private Collection $documents;
 
     public function __construct()
     {
         $this->projectFlow = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,6 +116,36 @@ class ProjectMember
             // set the owning side to null (unless already changed)
             if ($projectFlow->getMember() === $this) {
                 $projectFlow->setMember(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Document>
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents->add($document);
+            $document->setMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(Document $document): self
+    {
+        if ($this->documents->removeElement($document)) {
+            // set the owning side to null (unless already changed)
+            if ($document->getMember() === $this) {
+                $document->setMember(null);
             }
         }
 

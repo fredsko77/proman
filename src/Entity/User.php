@@ -47,11 +47,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Project::class)]
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Project::class, cascade: ['persist', 'remove'])]
     private Collection $projects;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ProjectMember::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ProjectMember::class, cascade: ['persist', 'remove'])]
     private Collection $projectMembers;
+
+
+    /**
+     * Roles utilisateur
+     */
+    const ROLE_ADMIN = ['ROLE_ADMIN'];
+    const ROLE_USER = ['ROLE_USER'];
+    const ROLE_MANAGER = ['ROLE_MANAGER'];
 
     public function __construct()
     {
@@ -259,5 +267,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public static function roles(): array
+    {
+        return [
+            self::ROLE_ADMIN,
+            self::ROLE_MANAGER,
+            self::ROLE_USER
+        ];
     }
 }

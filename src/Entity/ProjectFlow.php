@@ -28,6 +28,12 @@ class ProjectFlow
     #[ORM\Column]
     private ?bool $isRecurrent = null;
 
+    /**
+     * Type de transaction
+     */
+    const TYPE_DEPENSE = 'Dépenses';
+    const TYPE_REVENU = 'Revenu';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,5 +97,13 @@ class ProjectFlow
         $this->isRecurrent = $isRecurrent;
 
         return $this;
+    }
+
+    public static function types(): array
+    {
+        return [
+            self::TYPE_DEPENSE,
+            self::TYPE_REVENU
+        ];
     }
 }

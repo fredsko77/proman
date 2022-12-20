@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\FileTypeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Document;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\FileTypeRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: FileTypeRepository::class)]
 class FileType
@@ -24,7 +25,7 @@ class FileType
     #[ORM\Column]
     private array $extensions = [];
 
-    #[ORM\OneToMany(mappedBy: 'fileType', targetEntity: Document::class)]
+    #[ORM\OneToMany(mappedBy: 'fileType', targetEntity: Document::class, cascade: ['persist', 'remove'])]
     private Collection $documents;
 
     public function __construct()

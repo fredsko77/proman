@@ -37,20 +37,32 @@ class Project
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
-    private ?string $type = null;
-
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'project', targetEntity: ProjectFlow::class)]
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: ProjectFlow::class, cascade: ['persist', 'remove'])]
     private Collection $projectFlow;
 
-    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Document::class)]
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Document::class, cascade: ['persist', 'remove'])]
     private Collection $documents;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
+
+    #[ORM\ManyToOne(inversedBy: 'projects')]
+    private ?ProjectType $type = null;
+
+
+    /**
+     * Etats du projet
+     */
+    const STATE_A_VENIR = 'A venir';
+    const STATE_EN_COURS = 'En cours';
+    const STATE_EN_REFLEXION = 'En réflexion';
+    const STATE_TERMINE = 'Terminé';
 
     public function __construct()
     {
@@ -147,18 +159,6 @@ class Project
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(?string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -239,6 +239,30 @@ class Project
                 $document->setProject(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getType(): ?ProjectType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ProjectType $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

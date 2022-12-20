@@ -34,6 +34,9 @@ class Document
     #[ORM\ManyToOne(inversedBy: 'documents')]
     private ?FileType $fileType = null;
 
+    #[ORM\ManyToOne(inversedBy: 'documents')]
+    private ?ProjectMember $member = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,6 +122,18 @@ class Document
     public function setFileType(?FileType $fileType): self
     {
         $this->fileType = $fileType;
+
+        return $this;
+    }
+
+    public function getMember(): ?ProjectMember
+    {
+        return $this->member;
+    }
+
+    public function setMember(?ProjectMember $member): self
+    {
+        $this->member = $member;
 
         return $this;
     }
