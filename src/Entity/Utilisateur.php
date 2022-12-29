@@ -5,12 +5,13 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -47,24 +48,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Project::class, cascade: ['persist', 'remove'])]
-    private Collection $projects;
+    #[ORM\Column(length: 100)]
+    private ?string $username = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ProjectMember::class, cascade: ['persist', 'remove'])]
-    private Collection $projectMembers;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $biography = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverPorfile = null;
+
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: MembreProjet::class)]
+    private Collection $projets;
+
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: InvitationProjet::class)]
+    private Collection $invitationProjets;
 
     /**
      * Roles utilisateur
      */
-    const ROLE_ADMIN = ['ROLE_ADMIN'];
-    const ROLE_USER = ['ROLE_USER'];
+    const ROLE_ADMIN = ['ROLE_ADMINISTRATEUR'];
+    const ROLE_USER = ['ROLE_UTILISATEUR'];
     const ROLE_MANAGER = ['ROLE_MANAGER'];
 
     public function __construct()
     {
-        $this->projects = new ArrayCollection();
-        $this->projectMembers = new ArrayCollection();
+        $this->projets = new ArrayCollection();
+        $this->invitationProjets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -210,66 +222,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Project>
-     */
-    public function getProjects(): Collection
-    {
-        return $this->projects;
-    }
-
-    public function addProject(Project $project): self
-    {
-        if (!$this->projects->contains($project)) {
-            $this->projects->add($project);
-            $project->setCreatedBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProject(Project $project): self
-    {
-        if ($this->projects->removeElement($project)) {
-            // set the owning side to null (unless already changed)
-            if ($project->getCreatedBy() === $this) {
-                $project->setCreatedBy(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ProjectMember>
-     */
-    public function getProjectMembers(): Collection
-    {
-        return $this->projectMembers;
-    }
-
-    public function addProjectMember(ProjectMember $projectMember): self
-    {
-        if (!$this->projectMembers->contains($projectMember)) {
-            $this->projectMembers->add($projectMember);
-            $projectMember->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProjectMember(ProjectMember $projectMember): self
-    {
-        if ($this->projectMembers->removeElement($projectMember)) {
-            // set the owning side to null (unless already changed)
-            if ($projectMember->getUser() === $this) {
-                $projectMember->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public static function roles(): array
@@ -279,5 +231,113 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             self::ROLE_MANAGER,
             self::ROLE_USER
         ];
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getBiography(): ?string
+    {
+        return $this->biography;
+    }
+
+    public function setBiography(?string $biography): self
+    {
+        $this->biography = $biography;
+
+        return $this;
+    }
+
+    public function getCoverPorfile(): ?string
+    {
+        return $this->coverPorfile;
+    }
+
+    public function setCoverPorfile(?string $coverPorfile): self
+    {
+        $this->coverPorfile = $coverPorfile;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MembreProjet>
+     */
+    public function getProjets(): Collection
+    {
+        return $this->projets;
+    }
+
+    public function addProjet(MembreProjet $projet): self
+    {
+        if (!$this->projets->contains($projet)) {
+            $this->projets->add($projet);
+            $projet->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProjet(MembreProjet $projet): self
+    {
+        if ($this->projets->removeElement($projet)) {
+            // set the owning side to null (unless already changed)
+            if ($projet->getUtilisateur() === $this) {
+                $projet->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InvitationProjet>
+     */
+    public function getInvitationProjets(): Collection
+    {
+        return $this->invitationProjets;
+    }
+
+    public function addInvitationProjet(InvitationProjet $invitationProjet): self
+    {
+        if (!$this->invitationProjets->contains($invitationProjet)) {
+            $this->invitationProjets->add($invitationProjet);
+            $invitationProjet->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvitationProjet(InvitationProjet $invitationProjet): self
+    {
+        if ($this->invitationProjets->removeElement($invitationProjet)) {
+            // set the owning side to null (unless already changed)
+            if ($invitationProjet->getUtilisateur() === $this) {
+                $invitationProjet->setUtilisateur(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ProjectFlows;
+use App\Entity\Projet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ProjectFlows>
+ * @extends ServiceEntityRepository<Projet>
  *
- * @method ProjectFlows|null find($id, $lockMode = null, $lockVersion = null)
- * @method ProjectFlows|null findOneBy(array $criteria, array $orderBy = null)
- * @method ProjectFlows[]    findAll()
- * @method ProjectFlows[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Projet|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Projet|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Projet[]    findAll()
+ * @method Projet[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProjectFlowsRepository extends ServiceEntityRepository
+class ProjetRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProjectFlows::class);
+        parent::__construct($registry, Projet::class);
     }
 
-    public function save(ProjectFlows $entity, bool $flush = false): void
+    public function save(Projet $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ProjectFlowsRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ProjectFlows $entity, bool $flush = false): void
+    public function remove(Projet $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ProjectFlowsRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ProjectFlows[] Returns an array of ProjectFlows objects
+//     * @return Projet[] Returns an array of Projet objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ProjectFlowsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ProjectFlows
+//    public function findOneBySomeField($value): ?Projet
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

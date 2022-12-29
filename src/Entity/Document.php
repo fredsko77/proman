@@ -14,42 +14,36 @@ class Document
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $orignalName = null;
+    private ?string $originalName = null;
 
     #[ORM\Column(length: 255)]
     private ?string $path = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     private ?string $size = null;
 
-    #[ORM\ManyToOne(inversedBy: 'documents')]
-    private ?Project $project = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
-    #[ORM\ManyToOne(inversedBy: 'documents')]
+    #[ORM\ManyToOne]
     private ?FileType $fileType = null;
 
-    #[ORM\ManyToOne(inversedBy: 'documents')]
-    private ?ProjectMember $member = null;
+    #[ORM\ManyToOne]
+    private ?Utilisateur $utilisateur = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $uploadedAt = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getOrignalName(): ?string
+    public function getOriginalName(): ?string
     {
-        return $this->orignalName;
+        return $this->originalName;
     }
 
-    public function setOrignalName(string $orignalName): self
+    public function setOriginalName(string $originalName): self
     {
-        $this->orignalName = $orignalName;
+        $this->originalName = $originalName;
 
         return $this;
     }
@@ -78,42 +72,6 @@ class Document
         return $this;
     }
 
-    public function getProject(): ?Project
-    {
-        return $this->project;
-    }
-
-    public function setProject(?Project $project): self
-    {
-        $this->project = $project;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
     public function getFileType(): ?FileType
     {
         return $this->fileType;
@@ -126,14 +84,26 @@ class Document
         return $this;
     }
 
-    public function getMember(): ?ProjectMember
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->member;
+        return $this->utilisateur;
     }
 
-    public function setMember(?ProjectMember $member): self
+    public function setUtilisateur(?Utilisateur $utilisateur): self
     {
-        $this->member = $member;
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    public function getUploadedAt(): ?\DateTimeImmutable
+    {
+        return $this->uploadedAt;
+    }
+
+    public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
+    {
+        $this->uploadedAt = $uploadedAt;
 
         return $this;
     }

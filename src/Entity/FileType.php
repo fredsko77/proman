@@ -2,11 +2,9 @@
 
 namespace App\Entity;
 
-use App\Entity\Document;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FileTypeRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FileTypeRepository::class)]
 class FileType
@@ -16,22 +14,14 @@ class FileType
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 40)]
+    #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 40, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $icon = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::ARRAY)]
     private array $extensions = [];
-
-    #[ORM\OneToMany(mappedBy: 'fileType', targetEntity: Document::class, cascade: ['persist', 'remove'])]
-    private Collection $documents;
-
-    public function __construct()
-    {
-        $this->documents = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -70,36 +60,6 @@ class FileType
     public function setExtensions(array $extensions): self
     {
         $this->extensions = $extensions;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Document>
-     */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    public function addDocument(Document $document): self
-    {
-        if (!$this->documents->contains($document)) {
-            $this->documents->add($document);
-            $document->setFileType($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDocument(Document $document): self
-    {
-        if ($this->documents->removeElement($document)) {
-            // set the owning side to null (unless already changed)
-            if ($document->getFileType() === $this) {
-                $document->setFileType(null);
-            }
-        }
 
         return $this;
     }
