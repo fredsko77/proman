@@ -25,6 +25,12 @@ class Transaction
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToOne]
+    private ?TransactionType $type = null;
+
+    #[ORM\Column(length: 40, nullable: true)]
+    private ?string $period = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +80,30 @@ class Transaction
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getType(): ?TransactionType
+    {
+        return $this->type;
+    }
+
+    public function setType(?TransactionType $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getPeriod(): ?string
+    {
+        return $this->period;
+    }
+
+    public function setPeriod(?string $period): self
+    {
+        $this->period = $period;
 
         return $this;
     }
