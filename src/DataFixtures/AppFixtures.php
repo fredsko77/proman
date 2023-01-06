@@ -4,14 +4,14 @@ namespace App\DataFixtures;
 
 use App\Entity\CheckListItem;
 use Faker\Factory;
-use App\Entity\User;
-use App\Entity\Project;
+use App\Entity\Utilisateur;
+use App\Entity\Projet;
 use App\Entity\FileType;
 use App\Utils\FakerTrait;
 use Cocur\Slugify\Slugify;
 use App\Entity\ProjectFlow;
-use App\Entity\ProjectType;
 use App\Entity\ProjectMember;
+use App\Entity\TypeProjet;
 use App\Repository\ProjectFlowsRepository;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -36,7 +36,7 @@ class AppFixtures extends Fixture
 
         # Users
         for ($i = 0; $i < random_int(600, 1000); $i++) {
-            $user = new User;
+            $user = new Utilisateur;
 
             $user->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
@@ -45,7 +45,8 @@ class AppFixtures extends Fixture
                 ->setEmail($faker->email())
                 ->setPassword($this->hasher->hashPassword($user, 'password'))
                 ->setConfirm(true)
-                ->setRoles($faker->randomElement(User::roles()));
+                ->setRoles($faker->randomElement(Utilisateur::roles()))
+                ->setUsername($faker->userName());
 
             $manager->persist($user);
             $userList[$i] = $user;
@@ -53,7 +54,7 @@ class AppFixtures extends Fixture
 
         # ProjectTypes
         foreach ($this->getProjectTypes() as $k => $t) {
-            $type = new ProjectType;
+            $type = new TypeProjet;
 
             $type->setName($t['name'])
                 ->setDescription($t['description'])
@@ -65,7 +66,7 @@ class AppFixtures extends Fixture
 
         # Projects
         for ($i = 0; $i < random_int(500, 1000); $i++) {
-            $project = new Project;
+            $project = new Projet;
             $name = ucfirst($faker->words(random_int(2, 5), true));
             $members = $faker->randomElements($userList, random_int(1, 5));
             $owner = $this->randomElement($members);
@@ -76,48 +77,48 @@ class AppFixtures extends Fixture
                 ->setCreatedAt($this->setDateTimeBetween('-1 year'))
                 ->setUpdatedAt($this->setDateTimeAfter($project->getCreatedAt()))
                 ->setBudget($faker->randomFloat(2, 500, 100000))
-                ->setType($this->randomElement($projectTypes))
-                ->setCreatedBy($user);
+                ->setType($this->randomElement($projectTypes));
 
-            # ProjectMembers
-            foreach ($members as $k => $member) {
-                $member = new ProjectMember;
+            // # ProjectMembers
+            // foreach ($members as $k => $member) {
+            //     $member = new ProjectMember;
 
-                $member->setIsOwner($project->getCreatedBy() === $member)
-                    ->setMembershipDate($this->setDateTimeAfter($project->getCreatedAt()))
-                    ->setUser($owner)
-                    ->setProject($project);
+            //     $member->setIsOwner($project->getCreatedBy() === $member)
+            //         ->setMembershipDate($this->setDateTimeAfter($project->getCreatedAt()))
+            //         ->setUser($owner)
+            //         ->setProject($project);
 
-                # ProjectFlows
-                for ($f = 0; $f < random_int(0, 3); $f++) {
-                    $flow = new ProjectFlow;
+            //     # ProjectFlows
+            //     for ($f = 0; $f < random_int(0, 3); $f++) {
+            //         $flow = new ProjectFlow;
 
-                    $flow->setProject($project)
-                        ->setIsRecurrent($f % 2)
-                        ->setAmount($faker->randomFloat(2, 0, ($faker->randomFloat(2, 0.01, 0.1) * $project->getBudget())))
-                        ->setType($this->randomElement(ProjectFlow::types()));
+            //         $flow->setProject($project)
+            //             ->setIsRecurrent($f % 2)
+            //             ->setAmount($faker->randomFloat(2, 0, ($faker->randomFloat(2, 0.01, 0.1) * $project->getBudget())))
+            //             ->setType($this->randomElement(ProjectFlow::types()));
 
-                    $member->addProjectFlow($flow);
-                }
+            //         $member->addProjectFlow($flow);
+            //     }
 
-                # CheckListItems
-                for ($c = 0; $c < random_int(1, 4); $c++) {
-                    $listItem = new CheckListItem();
+            //     # CheckListItems
+            //     for ($c = 0; $c < random_int(1, 4); $c++) {
+            //         $listItem = new CheckListItem();
 
-                    $listItem->setReporter($member->getUser())
-                        ->setName($faker->words(random_int(1, 4), true))
-                        ->setCreatedAt($this->setDateTimeAfter($project->getCreatedAt()))
-                        ->setUpdatedAt($this->setDateTimeAfter($listItem->getCreatedAt()))
-                        ->setIsDone($c % random_int(1, 3))
-                        ->setCompletedAt($listItem->isIsDone() ? $this->setDateTimeAfter($listItem->getCreatedAt()) : null);
+            //         $listItem->setReporter($member->getUser())
+            //             ->setName($faker->words(random_int(1, 4), true))
+            //             ->setCreatedAt($this->setDateTimeAfter($project->getCreatedAt()))
+            //             ->setUpdatedAt($this->setDateTimeAfter($listItem->getCreatedAt()))
+            //             ->setIsDone($c % random_int(1, 3))
+            //             ->setCompletedAt($listItem->isIsDone() ? $this->setDateTimeAfter($listItem->getCreatedAt()) : null);
 
-                    $listItem->setProject($project);
-                    $manager->persist($listItem);
-                }
+            //         $listItem->setProject($project);
+            //         $manager->persist($listItem);
+            //     }
 
-                $member->setProject($project);
-                $manager->persist($member);
-            }
+            //     $member->setProject($project);
+            //     $manager->persist($member);
+            // }
+
             $manager->persist($project);
         }
 

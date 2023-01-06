@@ -9,6 +9,7 @@
 /public/uploads/
 /var/
 /vendor/
+/test-php
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

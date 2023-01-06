@@ -52,12 +52,19 @@ class Projet
     #[ORM\OneToMany(mappedBy: 'projet', targetEntity: Task::class)]
     private Collection $tasks;
 
+    #[ORM\OneToMany(mappedBy: 'projet', targetEntity: TypeProjet::class)]
+    private Collection $typeProjets;
+
+    #[ORM\ManyToOne]
+    private ?TypeProjet $type = null;
+
     public function __construct()
     {
         $this->notes = new ArrayCollection();
         $this->membres = new ArrayCollection();
         $this->invitationProjets = new ArrayCollection();
         $this->tasks = new ArrayCollection();
+        $this->typeProjets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -277,6 +284,18 @@ class Projet
                 $task->setProjet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?TypeProjet
+    {
+        return $this->type;
+    }
+
+    public function setType(?TypeProjet $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
