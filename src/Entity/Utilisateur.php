@@ -2,15 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\Types;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[
+    UniqueEntity(
+        fields: ['email'],
+        errorPath: 'email',
+        message: 'Cette adresse email est déjà utilisée !'
+    ),
+    UniqueEntity(
+        fields: ['username'],
+        errorPath: 'username',
+        message: 'Ce nom d\'utilisateur est déjà utilisé !'
+    )
+]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -19,6 +33,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'L\'adresse e-mail est obligatoire !')]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -30,10 +45,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Ce champs est obligatoire !', allowNull: true)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Ce champs est obligatoire !', allowNull: true)]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -49,6 +66,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $updated_at = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Le nom d\'utilisateur est obligatoire !')]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -113,7 +131,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_UTILISATEUR';
 
         return array_unique($roles);
     }

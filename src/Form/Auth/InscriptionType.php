@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Auth;
 
 use App\Entity\Utilisateur;
 use Symfony\Component\Form\AbstractType;
@@ -10,7 +10,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class InscriptionType extends AbstractType
 {
@@ -20,16 +22,31 @@ class InscriptionType extends AbstractType
             ->add('firstname', TextType::class, [
                 'required' => false,
                 'label' => 'Prénom',
+                'row_attr' => [
+                    'class' => 'col-6 mt-0'
+                ],
+                'attr' => [
+                    'autocomplete' => 'off'
+                ]
             ])
             ->add('lastname', TextType::class, [
                 'required' => false,
                 'label' => 'Nom de famille',
+                'row_attr' => [
+                    'class' => 'col-6 mt-0'
+                ],
+                'attr' => [
+                    'autocomplete' => 'off'
+                ]
             ])
             ->add('username', TextType::class, [
                 'label' => 'Nom d\'utilisateur',
             ])
             ->add('email', EmailType::class, [
                 'label' => 'E-mail',
+                'attr' => [
+                    'autocomplete' => 'off'
+                ]
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -44,10 +61,15 @@ class InscriptionType extends AbstractType
                         null,
                         true
                     ),
-
                     new NotBlank([], 'Ce champ est obligatoire !')
                 ],
-            ]);;
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'M\'inscrire',
+                'attr' => [
+                    'class' => 'btn btn-success w-100'
+                ]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
