@@ -24,6 +24,17 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
         parent::__construct($registry, Utilisateur::class);
     }
 
+    public function findUserByUsernameOrEmail(?string $username = ''): ?Utilisateur
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->orWhere('u.username = :username')
+            ->setParameter('email', $username)
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function save(Utilisateur $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
